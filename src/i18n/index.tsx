@@ -209,7 +209,7 @@ const I18nContext = createContext<I18nValue | null>(null);
 function initialLang(): Lang {
   const saved = readPref(PREF_KEY);
   if (saved === "en" || saved === "sw") return saved;
-  return typeof navigator !== "undefined" && navigator.language?.toLowerCase().startsWith("sw") ? "sw" : "en";
+  return "sw";
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
