@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink-950: #062c33;
+  --color-ink-900: #0a3d46;
+  --color-lagoon-50: #e8f5f4;
+  --color-lagoon-100: #c9e8e6;
+  --color-lagoon-200: #9bd3d0;
+  --color-lagoon-600: #0e868f;
+  --color-lagoon-700: #0b6f78;
+  --color-lagoon-800: #0a5a62;
+  --color-saffron-100: #fdf0cc;
+  --color-saffron-400: #f6b21a;
+  --color-saffron-500: #e09e0b;
+  --color-paper: #eef4f4;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink-950);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-lagoon-700);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pulse-ring {
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+.draw-check {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: draw 0.5s 0.25s ease-out forwards;
+}
+.rise-in {
+  animation: rise 0.35s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-ring {
+    animation: none;
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  .draw-check {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .rise-in {
+    animation: none;
+  }
+}
