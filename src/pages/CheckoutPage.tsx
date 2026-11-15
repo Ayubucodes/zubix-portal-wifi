@@ -109,9 +109,11 @@ export function CheckoutPage() {
       <Ticket pkg={pkg} />
 
       <Panel>
-        {providers.length === 0 ? (
-          <Alert tone="warning">{t.noProviders}</Alert>
-        ) : (
+        {
+        // providers.length === 0 ? (
+        //   <Alert tone="warning">{t.noProviders}</Alert>
+        // ) :
+         (
           <form onSubmit={onSubmit} noValidate className="space-y-5">
             {hasMock && selectedProvider === "MOCK" && <Alert tone="warning">{t.testBanner}</Alert>}
 
