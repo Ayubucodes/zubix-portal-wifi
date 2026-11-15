@@ -44,7 +44,7 @@ export function CheckoutPage() {
 
   if (status === "loading") {
     return (
-      <div role="status" className="flex items-center justify-center gap-3 py-10 text-ink-950/70">
+      <div role="status" className="flex min-h-[calc(100dvh-8rem)] items-center justify-center gap-3 text-ink-950/70 lg:min-h-0">
         <Spinner className="size-5 text-lagoon-700" />
         {t.loading}
       </div>
