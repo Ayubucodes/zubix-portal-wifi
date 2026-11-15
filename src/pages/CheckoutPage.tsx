@@ -108,6 +108,18 @@ export function CheckoutPage() {
       <BackLink />
       <Ticket pkg={pkg} />
 
+      <ul className="grid grid-cols-3 gap-3" aria-label="Supported mobile money networks">
+        {[
+          { name: "Airtel Money", src: "/airtel.png" },
+          { name: "HaloPesa", src: "/halopesa1.png" },
+          { name: "Yas", src: "/yas.png" },
+        ].map((network) => (
+          <li key={network.name} className="flex h-14 items-center justify-center rounded-xl bg-white px-3 py-2 ring-1 ring-ink-950/5">
+            <img src={network.src} alt={network.name} className="max-h-full max-w-full object-contain" />
+          </li>
+        ))}
+      </ul>
+
       <Panel>
         {
         // providers.length === 0 ? (
