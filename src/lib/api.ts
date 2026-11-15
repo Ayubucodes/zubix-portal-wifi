@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:4000";
+const API_BASE = "https://api.zubix.win";
 
 export class ApiError extends Error {
   readonly status: number;
