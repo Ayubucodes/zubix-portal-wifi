@@ -113,7 +113,14 @@ export function SuccessView({ title, packageName, expiresAt, subscriptionId }: P
         </Panel>
       )}
 
-      {connection.kind === "notConfigured" && <Alert tone="warning">{t.notConfigured}</Alert>}
+      {connection.kind === "notConfigured" && (
+        <div className="space-y-3">
+          <Alert tone="warning">{t.notConfigured}</Alert>
+          <Button variant="secondary" onClick={() => void connect()}>
+            {t.tryAgain}
+          </Button>
+        </div>
+      )}
       {connection.kind === "noDevice" && <Alert tone="info">{t.noDeviceInfo}</Alert>}
       {connection.kind === "error" && (
         <div className="space-y-3">
