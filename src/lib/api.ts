@@ -56,7 +56,7 @@ export interface PublicPackage {
 export interface PortalConfig {
   appName: string;
   supportPhone: string | null;
-  providers: Array<{ code: "SELCOM" | "CLICKPESA" | "MOCK"; name: string }>;
+  providers: Array<{ code: "SELCOM" | "CLICKPESA"; name: string }>;
 }
 
 export interface InitiatedPayment {

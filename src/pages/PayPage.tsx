@@ -68,41 +68,6 @@ function PulseIcon() {
   );
 }
 
-/** Test mode only: lets a developer act as the customer without a real mobile money prompt. */
-function MockPanel({ reference, onDone }: { reference: string; onDone: () => void }) {
-  const { t } = useI18n();
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-
-  const send = async (status: "SUCCESS" | "FAILED") => {
-    setBusy(true);
-    setMessage(null);
-    try {
-      await apiFetch(`/payments/dev/mock/${reference}/complete`, { method: "POST", body: JSON.stringify({ status }) });
-      onDone();
-    } catch (error) {
-      setMessage(error instanceof ApiError && error.status === 404 ? t.mockUnavailable : (error as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  return (
-    <Panel className="space-y-3 bg-saffron-100 ring-saffron-400/60">
-      <p className="font-semibold">{t.mockTitle}</p>
-      <div className="grid grid-cols-2 gap-3">
-        <Button onClick={() => void send("SUCCESS")} disabled={busy}>
-          {t.mockApprove}
-        </Button>
-        <Button variant="secondary" onClick={() => void send("FAILED")} disabled={busy}>
-          {t.mockDecline}
-        </Button>
-      </div>
-      {message && <Alert tone="info">{message}</Alert>}
-    </Panel>
-  );
-}
-
 export function PayPage() {
   const { reference = "" } = useParams();
   const { t } = useI18n();
@@ -244,8 +209,6 @@ export function PayPage() {
           </>
         )}
       </Panel>
-
-      {status.providerCode === "MOCK" && !gaveUp && <MockPanel reference={status.reference} onDone={recheck} />}
     </div>
   );
 }

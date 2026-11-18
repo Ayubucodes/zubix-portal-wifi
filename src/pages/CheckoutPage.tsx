@@ -10,7 +10,7 @@ import { normalizeTanzanianPhone } from "../lib/phone";
 import { writeStore } from "../lib/storage";
 import { uuid } from "../lib/uuid";
 
-type ProviderCode = "SELCOM" | "CLICKPESA" | "MOCK";
+const PROVIDER_CODE = "CLICKPESA";
 
 function BackLink() {
   const { t } = useI18n();
@@ -31,16 +31,13 @@ export function CheckoutPage() {
   const { status, packages, config, reload } = usePortalData();
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState<string | null>(null);
-  const [provider, setProvider] = useState<ProviderCode | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  // One key per attempt, so a retry after a dropped connection cannot charge twice.
-  // It changes whenever the phone number or provider changes, because that is a different payment.
+  // Keep the key stable across retries of the same payment attempt.
   const idempotencyKey = useRef(uuid());
 
   const pkg = packages.find((p) => p.id === packageId);
-  const providers = config?.providers ?? [];
-  const selectedProvider: ProviderCode | null = provider ?? providers[0]?.code ?? null;
+  const clickPesaAvailable = config?.providers.some((p) => p.code === PROVIDER_CODE) ?? false;
 
   if (status === "loading") {
     return (
@@ -76,7 +73,6 @@ export function CheckoutPage() {
   }
 
   const price = formatTzs(pkg.priceTzs);
-  const hasMock = providers.some((p) => p.code === "MOCK");
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -85,7 +81,6 @@ export function CheckoutPage() {
       setPhoneError(t.phoneInvalid);
       return;
     }
-    if (!selectedProvider) return;
     setPhoneError(null);
     setSubmitError(null);
     setSubmitting(true);
@@ -93,7 +88,7 @@ export function CheckoutPage() {
       const payment = await apiFetch<InitiatedPayment>("/payments/initiate", {
         method: "POST",
         headers: { "Idempotency-Key": idempotencyKey.current },
-        body: JSON.stringify({ packageId: pkg.id, phoneNumber: normalized, providerCode: selectedProvider }),
+        body: JSON.stringify({ packageId: pkg.id, phoneNumber: normalized, providerCode: PROVIDER_CODE }),
       });
       writeStore(`zubix.checkout.${payment.reference}`, JSON.stringify({ packageId: pkg.id, phone: normalized }));
       navigate(`/pay/${payment.reference}`);
@@ -121,14 +116,10 @@ export function CheckoutPage() {
       </ul>
 
       <Panel>
-        {
-        // providers.length === 0 ? (
-        //   <Alert tone="warning">{t.noProviders}</Alert>
-        // ) :
-         (
+        {!clickPesaAvailable ? (
+          <Alert tone="warning">{t.noProviders}</Alert>
+        ) : (
           <form onSubmit={onSubmit} noValidate className="space-y-5">
-            {hasMock && selectedProvider === "MOCK" && <Alert tone="warning">{t.testBanner}</Alert>}
-
             <Field label={t.phoneLabel} hint={t.phoneHint} error={phoneError} htmlFor="phone">
               <div
                 className={`flex overflow-hidden rounded-xl bg-white ring-1 ring-inset focus-within:ring-2 focus-within:ring-lagoon-700 ${
@@ -155,33 +146,6 @@ export function CheckoutPage() {
                 />
               </div>
             </Field>
-
-            {providers.length > 1 && (
-              <fieldset className="space-y-2">
-                <legend className="text-sm font-semibold">{t.payWith}</legend>
-                {providers.map((p) => (
-                  <label
-                    key={p.code}
-                    className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-4 ring-1 ring-inset ${
-                      selectedProvider === p.code ? "bg-lagoon-50 ring-2 ring-lagoon-700" : "ring-ink-950/15"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="provider"
-                      value={p.code}
-                      checked={selectedProvider === p.code}
-                      onChange={() => {
-                        setProvider(p.code);
-                        idempotencyKey.current = uuid();
-                      }}
-                      className="size-4 accent-lagoon-700"
-                    />
-                    {p.code === "MOCK" ? t.providerMock : t.providerMobile}
-                  </label>
-                ))}
-              </fieldset>
-            )}
 
             {submitError && <Alert>{submitError}</Alert>}
 

@@ -20,12 +20,10 @@ http://localhost:5174/?clientMac=AA-BB-CC-DD-EE-FF&apMac=11-22-33-44-55-66&ssidN
 ## What it does
 
 - `/` lists the passes on sale. The cheapest per hour is marked Best value.
-- `/buy/:id` takes a phone number and sends a payment request.
-- `/pay/:reference` waits for the customer to approve on their phone, checking every 3 seconds, and handles success, failure, expiry and a 5 minute give-up with the reference to show staff.
+- `/buy/:id` takes a phone number and starts a ClickPesa USSD payment request.
+- `/pay/:reference` checks payment status every 3 seconds, and handles success, failure, expiry and a 5 minute give-up with the reference to show staff. On success, the API returns the subscription ID used to connect the customer.
 - `/voucher` redeems a printed voucher code.
 - On success it asks the API to let the phone onto the Wi-Fi, using the device details the Omada controller put in the address.
-
-In test mode (the mock payment provider, never available in production) the waiting screen shows Approve and Decline buttons so you can walk the whole flow without a real prompt.
 
 ## Production notes
 
