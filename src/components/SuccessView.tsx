@@ -55,7 +55,10 @@ export function SuccessView({ title, packageName, expiresAt, subscriptionId }: P
       });
       setConnection(result.status === "AUTHORIZED" ? { kind: "online" } : { kind: "notConfigured" });
     } catch (error) {
-      setConnection({ kind: "error", message: error instanceof ApiError && error.status !== 0 ? error.message : t.connectError });
+      setConnection({
+        kind: "error",
+        message: error instanceof ApiError && error.status > 0 && error.status < 500 ? error.message : t.connectError,
+      });
     }
   }, [params, subscriptionId, t.connectError]);
 
