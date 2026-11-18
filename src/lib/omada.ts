@@ -7,6 +7,7 @@ import { readStore, writeStore } from "./storage";
  */
 export interface OmadaParams {
   clientMac: string;
+  clientIp: string | null;
   apMac: string;
   ssidName: string;
   radioId: 0 | 1;
@@ -22,6 +23,7 @@ export function captureOmadaParams(): OmadaParams | null {
   if (clientMac && apMac) {
     const params: OmadaParams = {
       clientMac,
+      clientIp: query.get("clientIp"),
       apMac,
       ssidName: query.get("ssidName") ?? "",
       radioId: query.get("radioId") === "1" ? 1 : 0,

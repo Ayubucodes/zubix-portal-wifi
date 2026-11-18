@@ -28,7 +28,7 @@ function minutesLeft(expiresAt: string | null): number | null {
 export function SuccessView({ title, packageName, expiresAt, subscriptionId }: Props) {
   const { t, lang } = useI18n();
   const params = useMemo(() => readStoredParams(), []);
-  const canConnect = Boolean(params && subscriptionId);
+  const canConnect = Boolean(params?.clientIp && subscriptionId);
   const [connection, setConnection] = useState<Connection>(canConnect ? { kind: "connecting" } : { kind: "noDevice" });
   const started = useRef(false);
   const [left, setLeft] = useState(() => minutesLeft(expiresAt));
@@ -39,7 +39,7 @@ export function SuccessView({ title, packageName, expiresAt, subscriptionId }: P
   }, [expiresAt]);
 
   const connect = useCallback(async () => {
-    if (!params || !subscriptionId) return;
+    if (!params?.clientIp || !subscriptionId) return;
     setConnection({ kind: "connecting" });
     try {
       const result = await apiFetch<ConnectResponse>("/public/connect", {
@@ -47,6 +47,7 @@ export function SuccessView({ title, packageName, expiresAt, subscriptionId }: P
         body: JSON.stringify({
           subscriptionId,
           clientMac: params.clientMac,
+          clientIp: params.clientIp,
           apMac: params.apMac,
           ssidName: params.ssidName,
           radioId: params.radioId,
